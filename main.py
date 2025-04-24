@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
+from passlib.context import CryptContext
+
 
 load_dotenv()  # Load .env file
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -29,7 +31,7 @@ app = FastAPI()
 def read_root():
     return {"status": "Banking API Online"}
 
-    from passlib.context import CryptContext
+   
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @app.post("/register")
@@ -41,15 +43,16 @@ def register(username: str, password: str):
     db.commit()
     return {"message": "User created"}
 
-    @app.get("/balance/{username}")
-def get_balance(username: str):
+@app.get("/balance/{username}")
+def get_balance(username: str):  # ← Aligned with @app
     db = SessionLocal()
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"balance": user.balance}
+    return {"balance": user.balance}  
 
-    @app.post("/transfer")
+
+@app.post("/transfer")
 def transfer(sender: str, receiver: str, amount: float):
     db = SessionLocal()
     # Atomic transaction
